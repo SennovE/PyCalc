@@ -10,7 +10,7 @@ class Variable():
         if type(symbol) != str:
             raise TypeError(f"the type of the variable name should be 'str', not '{type(symbol).__name__}'")
         
-        return Polinominal(coefficients={1:1}, symbol=symbol)
+        return Polinominal(coefficients={1:1}, symbol=symbol, latex=latex)
 
 
 
@@ -18,7 +18,7 @@ class Polinominal():
     __slots__ = ["coefficients", "symbol", "latex"]
 
 
-    def __init__(self, coefficients: Dict[int, Union[float, int]], symbol: str="x", latex=True) -> None:
+    def __init__(self, coefficients: Dict[int, Union[float, int]], symbol: str="x", latex=False) -> None:
         if type(coefficients) != dict:
             raise TypeError("0")
         
@@ -177,5 +177,5 @@ if __name__ == "__main__":
     x = Variable("x", latex=True)
     first_poli = (1 + 2*x - 3*x**2)*(4 + 5*x + 6*x**2)**2
     second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
-    third_poli = -x**9999995
+    third_poli = -x**9999
     print(third_poli)
