@@ -173,3 +173,4 @@ if __name__ == "__main__":
     second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
     third_poli = -x**9999
     print(third_poli)
+
