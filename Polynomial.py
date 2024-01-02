@@ -1,30 +1,28 @@
 from typing import Dict, Union
-from LaTeXStyle import LatexStyle
 
 class Variable():
     '''
     The class of the variable that can then be used in the equation
     '''
 
-    def __new__(cls, symbol: str="x", latex=False) -> "Polinominal":
+    def __new__(cls, symbol: str="x") -> "Polinominal":
         if type(symbol) != str:
             raise TypeError(f"the type of the variable name should be 'str', not '{type(symbol).__name__}'")
         
-        return Polinominal(coefficients={1:1}, symbol=symbol, latex=latex)
+        return Polinominal(coefficients={1:1}, symbol=symbol)
 
 
 
 class Polinominal():
-    __slots__ = ["coefficients", "symbol", "latex"]
+    __slots__ = ["coefficients", "symbol", ]
 
 
-    def __init__(self, coefficients: Dict[int, Union[float, int]], symbol: str="x", latex=False) -> None:
+    def __init__(self, coefficients: Dict[int, Union[float, int]], symbol: str="x") -> None:
         if type(coefficients) != dict:
             raise TypeError("0")
         
         self.coefficients = {}
         self.symbol = symbol
-        self.latex = latex
         
         for degree, coefficient in coefficients.items():
             if coefficient == 0:
@@ -49,7 +47,7 @@ class Polinominal():
             for degree, coefficient in other.coefficients.items():
                 terms[degree] = terms.get(degree, 0) + coefficient
 
-        return Polinominal(terms, self.symbol, self.latex)
+        return Polinominal(terms, self.symbol)
         
     __radd__ = __add__
 
@@ -60,7 +58,7 @@ class Polinominal():
         for degree, coefficient in self.coefficients.items():
             terms[degree] = -coefficient
 
-        return Polinominal(terms, self.symbol, self.latex)
+        return Polinominal(terms, self.symbol)
 
 
     def __sub__(self, other: Union[float, int, "Polinominal"]):
@@ -76,7 +74,7 @@ class Polinominal():
             for degree, coefficient in other.coefficients.items():
                 terms[degree] = terms.get(degree, 0) - coefficient
 
-        return Polinominal(terms, self.symbol, self.latex)
+        return Polinominal(terms, self.symbol)
     
 
     def __rsub__(self, other: Union[float, int, "Polinominal"]):
@@ -92,7 +90,7 @@ class Polinominal():
             for degree, coefficient in other.coefficients.items():
                 terms[degree] = -terms.get(degree, 0) + coefficient
 
-        return Polinominal(terms, self.symbol, self.latex)
+        return Polinominal(terms, self.symbol)
 
 
     def __mul__(self, other: Union[float, int, "Polinominal"]):
@@ -109,7 +107,7 @@ class Polinominal():
                 new_degree = first_degree + second_degree
                 terms[new_degree] = terms.get(new_degree, 0) + first_coefficient * second_coefficient
 
-        return Polinominal(terms, self.symbol, self.latex)
+        return Polinominal(terms, self.symbol)
 
     __rmul__ = __mul__
 
@@ -123,7 +121,7 @@ class Polinominal():
         if other == 0:
             return 1
         
-        new_poli = Polinominal(self.coefficients.copy(), self.symbol, self.latex)
+        new_poli = Polinominal(self.coefficients.copy(), self.symbol)
 
         for _ in range(other-1):
             new_poli = new_poli * self
@@ -133,10 +131,7 @@ class Polinominal():
 
     def __str__(self) -> str:
         terms = []
-        if self.latex:
-            var_symb = f"{LatexStyle.ITALIC}{self.symbol}{LatexStyle.RESET_FORMATTING}"
-        else:
-            var_symb = self.symbol
+        var_symb = self.symbol
 
         degrees = sorted(self.coefficients, reverse=True)
 
@@ -164,8 +159,7 @@ class Polinominal():
             if term_degree == 1:
                 degree = var_symb
             elif term_degree != 0:
-                degree = f"{var_symb}^{term_degree}" if not self.latex else\
-                    f"{var_symb}{''.join(LatexStyle.UPNUMS[number] for number in str(term_degree))}"
+                degree = f"{var_symb}^{term_degree}"
 
             terms.append(sign + coefficient + degree)
 
@@ -174,7 +168,7 @@ class Polinominal():
     
 
 if __name__ == "__main__":
-    x = Variable("x", latex=True)
+    x = Variable("x")
     first_poli = (1 + 2*x - 3*x**2)*(4 + 5*x + 6*x**2)**2
     second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
     third_poli = -x**9999
