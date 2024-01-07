@@ -127,6 +127,17 @@ class Polinominal():
             new_poli = new_poli * self
 
         return new_poli
+    
+    def __truediv__(self, other):
+        if type(other) not in [int, float, Polinominal]:
+            raise TypeError(f"unsupported operand type(s) for -: '{type(other).__name__}' and 'Polinominal'")
+        
+        terms = self.coefficients.copy()
+
+        if terms in [int, float]:
+            for i in terms:
+                terms[i] /= other
+
 
 
     def __str__(self) -> str:
@@ -172,5 +183,5 @@ if __name__ == "__main__":
     first_poli = (1 + 2*x - 3*x**2)*(4 + 5*x + 6*x**2)**2
     second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
     third_poli = -x**9999
-    print(third_poli)
+    print(second_poli)
 
