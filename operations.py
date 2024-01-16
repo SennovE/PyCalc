@@ -1,6 +1,6 @@
 from typing import List
 from cmath import exp, pi
-import numpy as np
+from math import ceil, log2
 
 
 def gcd(a: int, b: int) -> int:
@@ -11,11 +11,11 @@ def gcd(a: int, b: int) -> int:
     return b
 
 
-def fft(x):
+def fft(x: list) -> list[complex]:
     if len(x) <= 1:
         return x
     
-    N = int(2 ** np.ceil(np.log2(len(x))))
+    N = int(2 ** ceil(log2(len(x))))
     x += [0] * (N - len(x))
     
     even = fft(x[0::2])
@@ -26,11 +26,11 @@ def fft(x):
     return [even[k] + T[k] for k in range(N // 2)] + [even[k] - T[k] for k in range(N // 2)]
 
 
-def ifft(x):    
+def ifft(x: list[complex]) -> list[complex]:    
     if len(x) == 1:
         return x
     
-    N = int(2 ** np.ceil(np.log2(len(x))))
+    N = int(2 ** ceil(log2(len(x))))
     x += [0] * (N - len(x))
     
     omega_N = exp(2j * pi / N)
@@ -52,14 +52,14 @@ def ifft(x):
     return x
 
 
-def elem_mul(a, b):
+def elem_mul(a: list, b: list):
     final = []
     for i in range(len(a)):
         final.append(a[i] * b[i])
     return final
 
 
-def omega(n):
+def omega(n: int):
     final = []
     for i in range(n//2):
         final.append(exp(2j * pi / n) ** i)
@@ -67,11 +67,8 @@ def omega(n):
     return final
 
 
-def fft_mul(poly1, poly2):
-    poly1 = [poly1.coefficients.get(i, 0) for i in range(max(poly1.coefficients) + 1)]
-    poly2 = [poly2.coefficients.get(i, 0) for i in range(max(poly2.coefficients) + 1)]
-
-    n = int(2 ** np.ceil(np.log2(len(poly1) + len(poly2))))
+def fft_mul(poly1: list, poly2: list) -> list[complex]:
+    n = int(2 ** ceil(log2(len(poly1) + len(poly2))))
     poly1 += [0] * (n - len(poly1))
     poly2 += [0] * (n - len(poly2))
 
@@ -80,15 +77,7 @@ def fft_mul(poly1, poly2):
 
 
     fft_result = elem_mul(fft_poly1, fft_poly2)
-    print([round(i.real) for i in ifft(fft(poly1))[:10]])
-    print(poly1[:10])
 
     result = ifft(fft_result)
 
-    terms = {}
-
-    for i in range(len(result)):
-        if result[i] != 0:
-            terms[i] = round(result[i].real, 2)
-
-    return terms
+    return result

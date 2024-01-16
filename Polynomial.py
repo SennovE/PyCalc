@@ -284,5 +284,5 @@ if __name__ == "__main__":
     # first_poli = (3*(x**2 - 1) - 4*x*(3*x - 7))/((x**2 - 1)**3)
     second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
     third_poli = 1 / (3/x) + 1 / x + 23 / x + 23 / x
-    print(third_poli)
+    print(second_poli)
     
