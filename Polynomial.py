@@ -41,7 +41,10 @@ class Polinominal():
                     continue
                 self.coefficients[degree] = coefficient
             else:
-                self.coefficients[degree] = Fraction(coefficient, 1)
+                if int(coefficient) == coefficient:
+                    self.coefficients[degree] = Fraction(int(coefficient), 1)
+                else:                    
+                    self.coefficients[degree] = Fraction(coefficient, 1)
 
 
     def __add__(self, other: Union[float, int, "Polinominal", Fraction]) -> "Polinominal":
@@ -112,7 +115,7 @@ class Polinominal():
             elif type(frac_poli) == Fraction:
                 fraction = frac_poli
 
-        return Polinominal(terms, symbol=self.symbol)
+        return Polinominal(terms, symbol=self.symbol, fraction=fraction)
     
 
     def __rsub__(self, other: Union[float, int, "Polinominal"]) -> "Polinominal":
@@ -122,16 +125,12 @@ class Polinominal():
             raise TypeError(f"unsupported operand type(s) for -: '{type(other).__name__}' and 'Polinominal'")
         
         terms = self.coefficients.copy()
-        fraction = self.fraction
+        fraction = self.fraction * (-1)
 
         if type(other) in [int, float]:
             terms[0] = -terms.get(0, 0) + other
-        
-        elif type(other) == Polinominal:
-            for degree, coefficient in other.coefficients.items():
-                terms[degree] = -terms.get(degree, 0) + coefficient
 
-        return Polinominal(terms, symbol=self.symbol)
+        return Polinominal(terms, symbol=self.symbol, fraction=fraction)
 
 
     def __mul__(self, other: Union[float, int, "Polinominal"]) -> "Polinominal":
@@ -141,7 +140,11 @@ class Polinominal():
             raise TypeError(f"unsupported operand type(s) for *: '{type(other).__name__}' and 'Polinominal'")
         
         if type(other) in [int, float]:
-            other = Polinominal({0: other}, symbol=self.symbol)
+            new_poli = Polinominal(self.coefficients, symbol=self.symbol)
+            for i in new_poli.coefficients:
+                new_poli.coefficients[i] *= other
+            new_poli.fraction = self.fraction * other
+            return new_poli
         
         terms = {}
 
@@ -203,9 +206,9 @@ class Polinominal():
             new_poli = new_poli + multiplier
             old_poli = old_poli - tmp
 
+        
         if old_poli.coefficients != {0: 0}:
-            common_divisor = gcd(old_poli, other)
-            new_poli.fraction += Fraction(old_poli / common_divisor, other / common_divisor)
+            new_poli.fraction += Fraction(old_poli, other)
 
         return new_poli
                 
@@ -304,20 +307,34 @@ class Polinominal():
                 degree = f"{var_symb}^{term_degree}"
 
             terms.append(sign + coefficient + degree)
-        
+
+        terms = "".join(terms)
+
         if self.fraction:
-            terms.append(f" + ({self.fraction.numerator}) / ({self.fraction.denominator})")
+            numer = str(self.fraction.numerator)            
+            denom = str(self.fraction.denominator)
 
-        return "".join(terms)
+            if len(denom) > len(numer):
+                numer = ((len(denom) - len(numer)) // 2) * " " + numer
+                divider = "─" * len(denom)
+            else:                
+                denom = ((len(numer) - len(denom)) // 2) * " " + denom
+                divider = "─" * len(numer)
+
+            if terms:
+                numer = " " * (len(terms) + 3) + numer
+                divider = terms + " + " + divider
+                denom = " " * (len(terms) + 3) + denom
+
+            return f"{numer}\n{divider}\n{denom}"
+        
+        return terms
     
-
-
 
     
 
 if __name__ == "__main__":
     x = Variable("x")
-    second_poli = (x + 1) / (3*x**3 + 3*x**2)
-    # a = 2/x
-    print(second_poli)
+    a = 1 / x
+    print(a)
     

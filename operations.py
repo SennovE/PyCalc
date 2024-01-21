@@ -3,7 +3,7 @@ from math import ceil, log2
 
 
 def gcd(a, b):
-    """ a function that finds the largest common divisor of 'Polinominal' class """
+    """ a function that finds the greatest common divisor of 'Polinominal' class """
     
     if type(a).__name__ not in ["int", "Polinominal"] or type(b).__name__ not in  ["int", "Polinominal"]:
         raise TypeError(f"can't calculate gcd of '{type(a)}' and '{type(b)}'")
@@ -18,13 +18,18 @@ def gcd(a, b):
     elif type(b) == int:
         b = abs(b)
 
+    if type(a) == int and type(b).__name__ == "Polinominal":
+        a, b = b, a
+
     while a % b:
         a, b = b, a % b
+
     return b
 
 
 def scm(a: int, b: int) -> int:
     """ a function that finds the the smallest common multiple of integers """
+
     if type(a) != int or type(b) != int:
         raise TypeError(f"can't calculate scm of '{type(a)}' and '{type(b)}'")
     return a * b // gcd(a, b)
