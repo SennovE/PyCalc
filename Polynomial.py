@@ -273,8 +273,24 @@ class Polinominal():
 
                         
     def __str__(self) -> str:
-        terms = []
+
+        def makeFrac(numer: str, denom: str) -> list[str]:
+            if len(denom) > len(numer):
+                numer = ((len(denom) - len(numer)) // 2) * " " + numer + ((len(denom) - len(numer)) // 2 + (len(denom) - len(numer)) % 2) * " "
+                divider = "─" * len(denom)
+
+            else:                
+                denom = ((len(numer) - len(denom)) // 2) * " " + denom + ((len(numer) - len(denom)) // 2 + (len(numer) - len(denom)) % 2) * " "
+                divider = "─" * len(numer)
+            
+            return [str(numer), str(divider), str(denom)]
+       
         var_symb = self.symbol
+        
+        terms_numer = []
+        terms_mid = []
+        terms_denom = []
+        frac = False
 
         degrees = sorted(self.coefficients, reverse=True)
 
@@ -287,8 +303,8 @@ class Polinominal():
             if term_coefficient == 0:
                 continue
 
-            sign, coefficient, degree = "", "", ""
-
+            sign, degree = "", ""
+            
             if i == 0:
                 sign = "-" if term_coefficient < 0 else ""
             else:
@@ -297,44 +313,66 @@ class Polinominal():
             term_coefficient = abs(term_coefficient)
 
             if term_degree == 0:
-                coefficient = str(term_coefficient)
+                if type(term_coefficient) == Fraction:
+                    frac = True
+                    numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
+                else:                    
+                    mid = str(term_coefficient)
+                    numer = denom = " " * len(mid)
+
             else:
-                coefficient = "" if term_coefficient == 1 else str(term_coefficient)
+                if term_coefficient == 1:
+                    mid = ""
+                else:
+                    if type(term_coefficient) == Fraction:
+                        frac = True
+                        numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
+                        print(numer, denom)
+                    else:
+                        mid = str(term_coefficient)
+                        numer = denom = " " * len(mid)
 
             if term_degree == 1:
                 degree = var_symb
             elif term_degree != 0:
                 degree = f"{var_symb}^{term_degree}"
 
-            terms.append(sign + coefficient + degree)
+            mid = sign + mid + degree
+            numer = " " * len(sign) + numer + " " * (len(mid) - len(sign) - len(numer))
+            denom = " " * len(sign) + denom + " " * (len(mid) - len(sign) - len(denom))
+        
+            terms_numer.append(numer)
+            terms_mid.append(mid)
+            terms_denom.append(denom)
 
-        terms = "".join(terms)
+        terms_numer = "".join(terms_numer)
+        terms_mid = "".join(terms_mid)
+        terms_denom = "".join(terms_denom)
 
         if self.fraction:
-            numer = str(self.fraction.numerator)            
-            denom = str(self.fraction.denominator)
+            frac = True
+            numer, divider, denom = makeFrac(str(self.fraction.numerator), str(self.fraction.denominator))
 
-            if len(denom) > len(numer):
-                numer = ((len(denom) - len(numer)) // 2) * " " + numer
-                divider = "─" * len(denom)
-            else:                
-                denom = ((len(numer) - len(denom)) // 2) * " " + denom
-                divider = "─" * len(numer)
+            if terms_mid:
+                terms_numer = terms_numer + " " * 3 + numer
+                terms_mid = terms_mid + " + " + divider
+                terms_denom = terms_denom + " " * 3 + denom
+            else:
+                terms_numer = numer
+                terms_mid = divider
+                terms_denom = denom
 
-            if terms:
-                numer = " " * (len(terms) + 3) + numer
-                divider = terms + " + " + divider
-                denom = " " * (len(terms) + 3) + denom
 
-            return f"{numer}\n{divider}\n{denom}"
-        
-        return terms
+        if frac:
+            return f"{terms_numer}\n{terms_mid}\n{terms_denom}"        
+        return terms_mid
     
 
     
 
 if __name__ == "__main__":
     x = Variable("x")
-    a = 1 / x
+    a = (x**3 + 4*x**2 - 2*x + 5) / (2*x**2 - 3*x + 1)
+    b = 3*x
     print(a)
     

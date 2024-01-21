@@ -66,7 +66,7 @@ def ifft(x: list[complex]) -> list[complex]:
 
     factor = omega(N)
 
-    factor = elem_mul(factor, odd)
+    factor = elemMul(factor, odd)
 
     x = []
     
@@ -78,7 +78,7 @@ def ifft(x: list[complex]) -> list[complex]:
     return x
 
 
-def elem_mul(a: list, b: list):
+def elemMul(a: list, b: list):
     final = []
     for i in range(len(a)):
         final.append(a[i] * b[i])
@@ -93,7 +93,7 @@ def omega(n: int):
     return final
 
 
-def fft_mul(poly1: list, poly2: list) -> list[complex]:
+def fftMul(poly1: list, poly2: list) -> list[complex]:
     n = int(2 ** ceil(log2(len(poly1) + len(poly2))))
     poly1 += [0] * (n - len(poly1))
     poly2 += [0] * (n - len(poly2))
@@ -102,7 +102,7 @@ def fft_mul(poly1: list, poly2: list) -> list[complex]:
     fft_poly2 = fft(poly2)
 
 
-    fft_result = elem_mul(fft_poly1, fft_poly2)
+    fft_result = elemMul(fft_poly1, fft_poly2)
 
     result = ifft(fft_result)
 
