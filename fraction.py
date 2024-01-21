@@ -1,4 +1,4 @@
-from operations import gcd
+from operations import gcd, scm
 
 
 class Fraction():
@@ -8,20 +8,55 @@ class Fraction():
     __slots__ = ["numerator", "denominator"]
     __available_types = ["int", "float", "Polinominal", "Fraction"]
 
-    def __init__(self, numerator, denominator) -> None:
-        if type(numerator) == int and type(denominator) == int:
-            common_divisor = gcd(numerator, denominator)
-            self.numerator = numerator // common_divisor
-            self.denominator = denominator // common_divisor
-        
-        elif type(numerator).__name__ in ["int", "Polinominal"] and type(denominator).__name__ in ["int", "Polinominal"]:         
-            self.numerator = numerator
-            self.denominator = denominator
-
-        else:
+    def __new__(cls, numerator, denominator):
+        if type(numerator).__name__ not in cls.__available_types and type(denominator) == cls.__available_types:
             print(type(numerator), type(denominator))
             raise TypeError
+        
+        if numerator == 0 or denominator == 1:
+                return numerator
+        
+        instance = super(Fraction, cls).__new__(cls)
 
+        if type(numerator) == int and type(denominator) == int:
+            common_divisor = gcd(numerator, denominator)
+            instance.numerator = numerator // common_divisor
+            instance.denominator = denominator // common_divisor
+            return instance
+        
+        elif type(numerator).__name__ in ["int", "Polinominal"] and type(denominator).__name__ in ["int", "Polinominal"]:
+            k = 1
+            p_1 = 0
+            p_2 = 0
+
+            if type(numerator).__name__ == "Polinominal":
+                for num in numerator.coefficients:
+                    if type(numerator.coefficients[num]) == Fraction:
+                        k = scm(k, numerator.coefficients[num].denominator)                        
+                        p_1 = gcd(p_1, int(numerator.coefficients[num].numerator))
+                    elif type(numerator.coefficients[num]) in [int, float] and\
+                        int(numerator.coefficients[num]) == numerator.coefficients[num]:
+                        p_1 = gcd(p_1, int(numerator.coefficients[num]))
+
+            if type(numerator).__name__ == "Polinominal":
+                for num in denominator.coefficients:
+                    if type(denominator.coefficients[num]) == Fraction:
+                        k = scm(k, denominator.coefficients[num].denominator)                        
+                        p_2 = gcd(p_2, int(denominator.coefficients[num].numerator))
+                    elif type(denominator.coefficients[num]) in [int, float] and\
+                        int(denominator.coefficients[num]) == denominator.coefficients[num]:
+                        p_2 = gcd(p_2, int(denominator.coefficients[num]))
+
+            print(numerator, denominator)
+            p_1, p_2 = max(abs(p_1), 1), max(abs(p_1), 1)
+            instance.numerator = numerator * k / p_1
+            instance.denominator = denominator * k / p_2
+            return instance
+            
+        elif type(numerator) == Fraction or type(denominator) == Fraction:
+            return numerator / denominator
+        
+        
 
     @staticmethod
     def toFration(number: float|int) -> "Fraction":
@@ -144,6 +179,31 @@ class Fraction():
         return Fraction(self.numerator**other, self.denominator**other)
     
 
-    def __str__(self) -> str:
-        return f"{self.numerator} / {self.denominator}"
+    def __float__(self):
+        return self.numerator / self.denominator
     
+
+    def __lt__(self, other) -> bool: # self < other
+        return (float(self) - float(other)) < 0
+    
+    
+    def __le__(self, other) -> bool: # self <= other
+        return (float(self) - float(other)) <= 0
+    
+    
+    def __gt__(self, other) -> bool: # self > other
+        return (float(self) - float(other)) > 0
+    
+    
+    def __ge__(self, other) -> bool: # self >= other
+        return (float(self) - float(other)) >= 0
+    
+    
+    def __abs__(self) -> "Fraction": # abs( self )
+        return Fraction(abs(self.numerator), abs(self.denominator))
+    
+
+    def __str__(self) -> str:
+        if self.numerator == 0 or self.denominator == 1:
+            return str(self.numerator)
+        return f"{self.numerator} / {self.denominator}"

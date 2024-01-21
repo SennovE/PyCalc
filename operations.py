@@ -1,17 +1,37 @@
-from typing import List
 from cmath import exp, pi
 from math import ceil, log2
 
 
-def gcd(a: int, b: int) -> int:
-    if type(a) != int or type(b) != int:
-        raise TypeError(f"can't calculate gcd of '{type(a)}' and '{type(b)}'")    
+def gcd(a, b):
+    """ a function that finds the largest common divisor of 'Polinominal' class """
+    
+    if type(a).__name__ not in ["int", "Polinominal"] or type(b).__name__ not in  ["int", "Polinominal"]:
+        raise TypeError(f"can't calculate gcd of '{type(a)}' and '{type(b)}'")
+    
+    if a == 0:
+        return b
+    elif b == 0:
+        return a
+
+    if type(a) == int:
+        a = abs(a)
+    elif type(b) == int:
+        b = abs(b)
+
     while a % b:
         a, b = b, a % b
     return b
 
 
+def scm(a: int, b: int) -> int:
+    """ a function that finds the the smallest common multiple of integers """
+    if type(a) != int or type(b) != int:
+        raise TypeError(f"can't calculate scm of '{type(a)}' and '{type(b)}'")
+    return a * b // gcd(a, b)
+
+
 def fft(x: list) -> list[complex]:
+    """ fast Fourier transform algorithm """
     if len(x) <= 1:
         return x
     
@@ -26,7 +46,8 @@ def fft(x: list) -> list[complex]:
     return [even[k] + T[k] for k in range(N // 2)] + [even[k] - T[k] for k in range(N // 2)]
 
 
-def ifft(x: list[complex]) -> list[complex]:    
+def ifft(x: list[complex]) -> list[complex]:
+    """ the algorithm of the inverse fast Fourier transform """
     if len(x) == 1:
         return x
     
@@ -81,3 +102,4 @@ def fft_mul(poly1: list, poly2: list) -> list[complex]:
     result = ifft(fft_result)
 
     return result
+

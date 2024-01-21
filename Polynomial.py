@@ -3,7 +3,6 @@ from operations import gcd
 from fraction import Fraction
 
 
-
 class Variable():
     '''
     The class of the variable that can then be used in the equation
@@ -14,7 +13,6 @@ class Variable():
             raise TypeError(f"the type of the variable name should be 'str', not '{type(symbol).__name__}'")
         
         return Polinominal(coefficients={1:1}, symbol=symbol)
-
 
 
 class Polinominal():
@@ -36,9 +34,14 @@ class Polinominal():
                 continue
             if type(degree) != int:
                 raise TypeError
-            if type(coefficient) not in [int, float]:
+            if type(coefficient) not in [int, float, Fraction]:
                 raise TypeError
-            self.coefficients[degree] = coefficient
+            if type(coefficient) == Fraction:
+                if coefficient.numerator == 0:
+                    continue
+                self.coefficients[degree] = coefficient
+            else:
+                self.coefficients[degree] = Fraction(coefficient, 1)
 
 
     def __add__(self, other: Union[float, int, "Polinominal", Fraction]) -> "Polinominal":
@@ -187,22 +190,22 @@ class Polinominal():
         fraction = 0
         if self.fraction:
             fraction = self.fraction / other
-            
+
         new_poli = Polinominal({}, symbol=self.symbol, fraction=fraction)
         old_poli = Polinominal(old_poli, symbol=self.symbol)
 
         while old_poli.coefficients != {0: 0} and max(old_poli.coefficients) >= max(other.coefficients):
             multiplier = Polinominal(
                 {max(old_poli.coefficients) - max(other.coefficients):
-                old_poli.coefficients[max(old_poli.coefficients)] / other.coefficients[max(other.coefficients)]},
+                Fraction(old_poli.coefficients[max(old_poli.coefficients)], other.coefficients[max(other.coefficients)])},
                 symbol=self.symbol)
-            
             tmp = multiplier * other
             new_poli = new_poli + multiplier
             old_poli = old_poli - tmp
 
         if old_poli.coefficients != {0: 0}:
-            new_poli.fraction += Fraction(old_poli, other)
+            common_divisor = gcd(old_poli, other)
+            new_poli.fraction += Fraction(old_poli / common_divisor, other / common_divisor)
 
         return new_poli
                 
@@ -231,6 +234,39 @@ class Polinominal():
             other_numerator = Polinominal(other.coefficients, symbol=self.symbol)
 
         return (self_numerator * other_numerator) / (self_denominator * other_denominator)
+
+
+    def __mod__(self, other) -> "Polinominal":
+        """ 'Polinominal' % other """
+
+        if type(other) not in [int, float, Polinominal]:
+            raise TypeError(f"unsupported operand type(s) for %: '{type(other).__name__}' and 'Polinominal'")        
+
+        old_poli = self.coefficients.copy()
+
+        if type(other) in [int, float]:
+            for i in old_poli:
+                old_poli[i] /= other
+            return Polinominal(old_poli, symbol=self.symbol)        
+
+        fraction = 0
+        if self.fraction:
+            fraction = self.fraction / other
+            
+        old_poli = Polinominal(old_poli, symbol=self.symbol)
+
+        while old_poli.coefficients != {0: 0} and max(old_poli.coefficients) >= max(other.coefficients):
+            multiplier = Polinominal(
+                {max(old_poli.coefficients) - max(other.coefficients):
+                Fraction(old_poli.coefficients[max(old_poli.coefficients)], other.coefficients[max(other.coefficients)])},
+                symbol=self.symbol)
+            tmp = multiplier * other
+            old_poli = old_poli - tmp
+
+        if old_poli.coefficients != {0: 0}:
+            return old_poli
+
+        return 0
 
                         
     def __str__(self) -> str:
@@ -281,8 +317,7 @@ class Polinominal():
 
 if __name__ == "__main__":
     x = Variable("x")
-    # first_poli = (3*(x**2 - 1) - 4*x*(3*x - 7))/((x**2 - 1)**3)
-    second_poli = (-3*x**2 + 2*x + 1)*(6*x**3 + 5*x + 4)
-    third_poli = 1 / (3/x) + 1 / x + 23 / x + 23 / x
+    second_poli = (x + 1) / (3*x**3 + 3*x**2)
+    # a = 2/x
     print(second_poli)
     
