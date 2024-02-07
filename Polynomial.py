@@ -1,5 +1,4 @@
 from typing import Dict, Union
-from operations import gcd
 from fraction import Fraction
 
 
@@ -122,15 +121,9 @@ class Polinominal():
         """ other - 'Polinominal' """
 
         if type(other) not in [int, float, Polinominal]:
-            raise TypeError(f"unsupported operand type(s) for -: '{type(other).__name__}' and 'Polinominal'")
-        
-        terms = self.coefficients.copy()
-        fraction = self.fraction * (-1)
+            raise TypeError(f"unsupported operand type(s) for -: '{type(other).__name__}' and 'Polinominal'")        
 
-        if type(other) in [int, float]:
-            terms[0] = -terms.get(0, 0) + other
-
-        return Polinominal(terms, symbol=self.symbol, fraction=fraction)
+        return (self - other) * (-1)
 
 
     def __mul__(self, other: Union[float, int, "Polinominal"]) -> "Polinominal":
@@ -147,13 +140,29 @@ class Polinominal():
             return new_poli
         
         terms = {}
+        if not (self.fraction or other.fraction):
+            for first_degree, first_coefficient in self.coefficients.items():
+                for second_degree, second_coefficient in other.coefficients.items():
+                    new_degree = first_degree + second_degree
+                    terms[new_degree] = terms.get(new_degree, 0) + first_coefficient * second_coefficient
+            return Polinominal(terms, symbol=self.symbol)
+        
+        else:
+            self_numer = 0
+            self_denom = 1
+            other_numer = 0
+            other_denom = 1
+            if self.fraction:
+                self_numer = self.fraction.numerator
+                self_denom = self.fraction.denominator
+            if other.fraction:
+                other_numer = other.fraction.numerator
+                other_denom = other.fraction.denominator
 
-        for first_degree, first_coefficient in self.coefficients.items():
-            for second_degree, second_coefficient in other.coefficients.items():
-                new_degree = first_degree + second_degree
-                terms[new_degree] = terms.get(new_degree, 0) + first_coefficient * second_coefficient
-
-        return Polinominal(terms, symbol=self.symbol)
+            return (Polinominal(self.coefficients, symbol=self.symbol) * self_denom + self_numer) * \
+                   (Polinominal(other.coefficients, symbol=self.symbol) * other_denom + other_numer) / \
+                   (self_denom * other_denom)
+        
 
     __rmul__ = __mul__
 
@@ -250,11 +259,7 @@ class Polinominal():
         if type(other) in [int, float]:
             for i in old_poli:
                 old_poli[i] /= other
-            return Polinominal(old_poli, symbol=self.symbol)        
-
-        fraction = 0
-        if self.fraction:
-            fraction = self.fraction / other
+            return Polinominal(old_poli, symbol=self.symbol)
             
         old_poli = Polinominal(old_poli, symbol=self.symbol)
 
@@ -322,12 +327,11 @@ class Polinominal():
 
             else:
                 if term_coefficient == 1:
-                    mid = ""
+                    numer, mid, denom = "", "", ""
                 else:
                     if type(term_coefficient) == Fraction:
                         frac = True
                         numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
-                        print(numer, denom)
                     else:
                         mid = str(term_coefficient)
                         numer = denom = " " * len(mid)
@@ -366,13 +370,3 @@ class Polinominal():
         if frac:
             return f"{terms_numer}\n{terms_mid}\n{terms_denom}"        
         return terms_mid
-    
-
-    
-
-if __name__ == "__main__":
-    x = Variable("x")
-    a = (x**3 + 4*x**2 - 2*x + 5) / (2*x**2 - 3*x + 1)
-    b = 3*x
-    print(a)
-    
