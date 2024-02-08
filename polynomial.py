@@ -370,8 +370,7 @@ class Polinominal():
         if frac:
             return f"{terms_numer}\n{terms_mid}\n{terms_denom}"        
         return terms_mid
-    
-    
+        
     def __repr__(self) -> str:
         string = []
         var_symb = self.symbol
