@@ -42,6 +42,34 @@ x^2 + 2x + 1
                                                       x^6 - 3x^5 + 2x^4 - 3x^3 + 85x^2 - 252x + 84
 ```
 
+The 'Polynomial' class can be used together with 'Numpy'
+
+### Example
+
+```python
+from polinominal import Variable
+from numpy import array
+
+x = Variable("x")
+
+a = array([
+    [1, x],
+    [2*x, 3]
+])
+b = array([
+    [1, 0, x**2],
+    [2*x, 3, -7]
+])
+
+print(a @ b)
+```
+
+```C
+[[+2x^2+1x^0 +3x^1 +1x^2-7x^1]
+ [+8x^1 +9x^0 +2x^3-21x^0]]
+```
+
+
 This module also makes it possible to work with fractions.
 
 Also in the file operations.py there is an implementation of the `fft algorithm`, which also allows for fast multiplication, which can be used when calculating the multiplication of polynomials that do not have huge powers or coefficients.
