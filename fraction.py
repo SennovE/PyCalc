@@ -203,9 +203,9 @@ class Fraction():
     
     def __abs__(self) -> "Fraction": # abs( self )
         return Fraction(abs(self.numerator), abs(self.denominator))
-    
 
-    def __str__(self) -> str:
+    
+    def __repr__(self) -> str:
         if self.numerator == 0 or self.denominator == 1:
             return str(self.numerator)
         return f"{self.numerator}⁄{self.denominator}"
