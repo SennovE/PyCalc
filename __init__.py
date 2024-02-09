@@ -9,13 +9,13 @@ To start working with polynomials, you need to create a `Variable` and use it to
 
 Example
 
-```
-from PyCalc import Variable
-x = Variable("x")
-expression = 2*x**2 + x + 1 + (x + 4) / (x**3)
-```
+>>> from PyCalc.polynomial import Variable
+>>> x = Variable("x")
+>>> expression = 2*x**2 + x + 1 + (x + 4) / (x**3)
+
+You can use 'float' type in your expression and `Fraction` will automatically convert it to fraction if the numerator and denominator do not exceed 10^3.
 """
 
-from .polynomial import Variable
-from .fraction import *
-from .operations import *
+from . import operations
+from . import fraction
+from . import polynomial

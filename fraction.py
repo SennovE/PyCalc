@@ -71,7 +71,9 @@ class Fraction():
 
         numerator, denominator = 1, 1
 
-        while abs(number - numerator / denominator) > 10e-20 :
+        while abs(number - numerator / denominator) > 10e-20:
+            if numerator > 10**3 or denominator > 10**3:
+                raise Exception("number cannot be converted :(")
             if numerator / denominator < number:
                 numerator += 1
             else:
@@ -85,8 +87,14 @@ class Fraction():
 
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for +: '{type(other).__name__}' and 'Fraction'")
+        
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return other + self.numerator / self.denominator
     
-        elif type(other) == Fraction:
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.numerator * other.denominator + self.denominator * other.numerator) / (self.denominator * other.denominator)
@@ -102,7 +110,13 @@ class Fraction():
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for -: 'Fraction' and '{type(other).__name__}'")
         
-        elif type(other) == Fraction:
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return self.numerator / self.denominator - other
+        
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 a = (self.numerator * other.denominator - self.denominator * other.numerator) / (self.denominator * other.denominator)
@@ -117,7 +131,13 @@ class Fraction():
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for -: '{type(other).__name__}' and 'Fraction'")
         
-        elif type(other) == Fraction:
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return other - self.numerator / self.denominator
+        
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.denominator * other.numerator - self.numerator * other.denominator) / (self.denominator * other.denominator)
@@ -132,7 +152,13 @@ class Fraction():
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for *: '{type(other).__name__}' and 'Fraction'")
         
-        elif type(other) == Fraction:
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return other * self.numerator / self.denominator
+        
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.numerator * other.numerator) / (self.denominator * other.denominator)
@@ -148,7 +174,13 @@ class Fraction():
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for /: '{type(other).__name__}' and 'Fraction'")
         
-        elif type(other) == Fraction:
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return self.numerator / self.denominator / other
+        
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.numerator * other.denominator) / (self.denominator * other.numerator)
@@ -162,7 +194,13 @@ class Fraction():
         if type(other).__name__ not in Fraction.__available_types:
             raise TypeError(f"unsupported operand type(s) for /: 'Fraction' and '{type(other).__name__}'")
         
-        elif type(other) == Fraction:
+        elif type(other) == float:
+            try:
+                other = self.toFration(other)
+            except Exception:
+                return  other / self.numerator * self.denominator
+        
+        if type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.denominator * other.numerator) / (self.numerator * other.numerator)
@@ -181,6 +219,10 @@ class Fraction():
 
     def __float__(self):
         return self.numerator / self.denominator
+    
+
+    def __int__(self):
+        return self.numerator // self.denominator
     
 
     def __eq__(self, other) -> bool: # self == other        
@@ -205,7 +247,23 @@ class Fraction():
     
     def __abs__(self) -> "Fraction": # abs( self )
         return Fraction(abs(self.numerator), abs(self.denominator))
+    
 
+    def __iadd__(self, other) -> "Fraction":
+        return self + other
+
+
+    def __isub__(self, other) -> "Fraction":
+        return self - other
+    
+
+    def __imul__(self, other) -> "Fraction":
+        return self * other
+    
+    
+    def __itruediv__(self, other) -> "Fraction":
+        return self / other
+    
     
     def __repr__(self) -> str:
         if self.numerator == 0 or self.denominator == 1:

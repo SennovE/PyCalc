@@ -135,16 +135,16 @@ class Polinominal():
         return (self - other) * (-1)
 
 
-    def __mul__(self, other: Union[float, int, "Polinominal"]) -> "Polinominal":
+    def __mul__(self, other: Union[float, int, "Polinominal", Fraction]) -> "Polinominal":
         """ 'Polinominal' * other """
 
-        if type(other) not in [int, float, Polinominal]: 
+        if type(other) not in [int, float, Polinominal, Fraction]: 
             raise TypeError(f"unsupported operand type(s) for *: '{type(other).__name__}' and 'Polinominal'")
         
-        if type(other) in [int, float]:
+        if type(other) in [int, float, Fraction]:
             new_poli = Polinominal(self.coefficients, symbol=self.symbol)
             for i in new_poli.coefficients:
-                new_poli.coefficients[i] *= other
+                new_poli.coefficients[i] = new_poli.coefficients[i] * other
             new_poli.fraction = self.fraction * other
             return new_poli
         
@@ -195,15 +195,15 @@ class Polinominal():
         return new_poli
     
     
-    def __truediv__(self, other) -> "Polinominal":
+    def __truediv__(self, other: Union[int, float, "Polinominal", Fraction]) -> "Polinominal":
         """ 'Polinominal' / other """
 
-        if type(other) not in [int, float, Polinominal]:
+        if type(other) not in [int, float, Polinominal, Fraction]:
             raise TypeError(f"unsupported operand type(s) for /: '{type(other).__name__}' and 'Polinominal'")        
 
         old_poli = self.coefficients.copy()
 
-        if type(other) in [int, float]:
+        if type(other) in [int, float, Fraction]:
             for i in old_poli:
                 old_poli[i] /= other
             return Polinominal(old_poli, symbol=self.symbol, fraction=self.fraction / other)
@@ -231,10 +231,10 @@ class Polinominal():
         return new_poli
                 
 
-    def __rtruediv__(self, other) -> "Polinominal":
+    def __rtruediv__(self, other: Union[int, float, "Polinominal", Fraction]) -> "Polinominal":
         """ other / 'Polinominal' """
 
-        if type(other) not in [int, float, Polinominal]:
+        if type(other) not in [int, float, Polinominal, Fraction]:
             raise TypeError(f"unsupported operand type(s) for /: '{type(other).__name__}' and 'Polinominal'")
         
         if self.fraction:
@@ -257,15 +257,15 @@ class Polinominal():
         return (self_numerator * other_numerator) / (self_denominator * other_denominator)
 
 
-    def __mod__(self, other) -> "Polinominal":
+    def __mod__(self, other: Union[int, float, "Polinominal", Fraction]) -> "Polinominal":
         """ 'Polinominal' % other """
 
-        if type(other) not in [int, float, Polinominal]:
+        if type(other) not in [int, float, Polinominal, Fraction]:
             raise TypeError(f"unsupported operand type(s) for %: '{type(other).__name__}' and 'Polinominal'")        
 
         old_poli = self.coefficients.copy()
 
-        if type(other) in [int, float]:
+        if type(other) in [int, float, Fraction]:
             for i in old_poli:
                 old_poli[i] /= other
             return Polinominal(old_poli, symbol=self.symbol)
@@ -425,4 +425,10 @@ class Polinominal():
         return " ".join(string)
     
 
-    #def evaluate_polynomial(self, variable: Union[int, float]):
+    def evaluate_polynomial(self, variable: Union[int, float, Fraction]):
+        value = 0
+        for degree in self.coefficients:
+            value += self.coefficients[degree] * variable ** degree
+        if self.fraction:
+            value += (self.fraction.numerator.evaluate_polynomial(variable) / self.fraction.denominator.evaluate_polynomial(variable))
+        return value
