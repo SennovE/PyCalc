@@ -13,7 +13,7 @@ class Fraction():
             print(type(numerator), type(denominator))
             raise TypeError
         
-        if numerator == 0 or denominator == 1:
+        if numerator == 0:
                 return numerator
         
         instance = super(Fraction, cls).__new__(cls)
@@ -185,6 +185,10 @@ class Fraction():
         return self.numerator / self.denominator
     
 
+    def __eq__(self, other) -> bool: # self == other        
+        return (float(self) - float(other)) < 10**(-20)
+    
+
     def __lt__(self, other) -> bool: # self < other
         return (float(self) - float(other)) < 0
     
@@ -208,4 +212,4 @@ class Fraction():
     def __repr__(self) -> str:
         if self.numerator == 0 or self.denominator == 1:
             return str(self.numerator)
-        return f"{self.numerator}⁄{self.denominator}"
+        return f"{self.numerator}/{self.denominator}"

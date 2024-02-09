@@ -371,17 +371,38 @@ class Polinominal():
             return f"{terms_numer}\n{terms_mid}\n{terms_denom}"        
         return terms_mid
         
+        
     def __repr__(self) -> str:
         string = []
         var_symb = self.symbol
         degrees = sorted(self.coefficients, reverse=True)
         for i in degrees:
+            s = ""
+
             if self.coefficients[i] < 0:
-                string.append(f"-{abs(self.coefficients[i])}{var_symb}^{i}")
+                s += "-"
             elif self.coefficients[i] == 0:
                 continue
             else:
-                string.append(f"+{self.coefficients[i]}{var_symb}^{i}")
+                if len(string) != 0:
+                    s += "+"
+
+            if abs(self.coefficients[i]) != 1 or i == 0:
+                s += str(abs(self.coefficients[i]))
+
+            if i == 1:
+                s += var_symb
+            elif i != 0:
+                s += f"{var_symb}^{i}"
+            string.append(s)
+                
         if self.fraction:
-            string.append(f"+({self.fraction.numerator.__repr__})/({self.fraction.denominator.__repr__})")
+            if len(string) != 0:
+                string.append(f"+({self.fraction.numerator.__repr__})/({self.fraction.denominator.__repr__})")
+            else:                
+                string.append(f"({self.fraction.numerator.__repr__})/({self.fraction.denominator.__repr__})")
+
+        if len(string) == 0:
+            return "0"
+        
         return "".join(string)

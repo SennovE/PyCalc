@@ -3,6 +3,8 @@ Mathematical module for python
 
 This module adds the ability to work with polynomials through the `Polynomial` class, which contains separate terms of different degrees and the correct fraction.
 
+---
+
 To start working with polynomials, you need to create a `Variable` and use it to set a polynomial.
 
 ### Example
@@ -26,7 +28,8 @@ print("=" * 100 + 6)
 print(d)
 ```
 
-####Output
+#### Output
+
 ```Java
      1      
 ────────────
@@ -43,7 +46,9 @@ x^2 + 2x + 1
                                                       x^6 - 3x^5 + 2x^4 - 3x^3 + 85x^2 - 252x + 84
 ```
 
-The 'Polynomial' class can be used together with 'Numpy'
+---
+
+The `Polynomial` class can be used together with `Numpy`.
 
 ### Example
 
@@ -54,7 +59,7 @@ from numpy import array
 x = Variable("x")
 
 a = array([
-    [1, x],
+    [1, x/2],
     [2*x, 3]
 ])
 b = array([
@@ -66,10 +71,11 @@ print(a @ b)
 ```
 
 ```C
-[[+2x^2+1x^0 +3x^1 +1x^2-7x^1]
- [+8x^1 +9x^0 +2x^3-21x^0]]
+[[x^2+1 3/2x x^2]
+ [8x 9 2x^3-21]]
 ```
 
+---
 
 This module also makes it possible to work with fractions.
 
