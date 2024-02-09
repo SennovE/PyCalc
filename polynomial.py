@@ -1,11 +1,18 @@
 from typing import Dict, Union
-from fraction import Fraction
+from .fraction import Fraction
 
 
 class Variable():
-    '''
-    The class of the variable that can then be used in the equation
-    '''
+    """
+    #### The class of the variable that can then be used in the mathematical expression
+
+    ##### Usage:
+
+    ```Python
+    x = Variable("x")
+    expression = 2*x**2 + x + 1 + (x + 4) / (x**3)
+    ```
+    """
 
     def __new__(cls, symbol: str="x"):
         if type(symbol) != str:
@@ -15,14 +22,16 @@ class Variable():
 
 
 class Polinominal():
-    '''
-    A class for representing a polynomial as a sum of monomials of different degrees
-    '''
+    """
+    A class for representing a polynomial as a separate terms of different degrees and the correct fraction.
+
+    To make mathematical expression use `Variable` class.
+    """
     __slots__ = ["coefficients", "symbol", "fraction"]
 
-    def __init__(self, coefficients: Dict[int, Union[float, int]]={}, fraction: Fraction=0, symbol: str="x") -> None:
+    def __init__(self, coefficients: Dict[int, Union[float, int, Fraction]]={}, fraction: Fraction=0, symbol: str="x") -> None:
         if type(coefficients) != dict:
-            raise TypeError
+            raise TypeError("use the Variable class to create a variable, and then make an expression")
         
         self.coefficients = {0: 0}
         self.symbol = symbol
@@ -173,7 +182,7 @@ class Polinominal():
         if type(other) not in [int]: 
             raise TypeError(f"unsupported operand type(s) for **: '{type(other).__name__}' and 'Polinominal'")
         if other < 0: 
-            raise TypeError(f"<0")
+            raise TypeError(f"the degree of the number must not be lower than 0")
         
         if other == 0:
             return 1
@@ -197,7 +206,7 @@ class Polinominal():
         if type(other) in [int, float]:
             for i in old_poli:
                 old_poli[i] /= other
-            return Polinominal(old_poli, symbol=self.symbol)        
+            return Polinominal(old_poli, symbol=self.symbol, fraction=self.fraction / other)
 
         fraction = 0
         if self.fraction:
@@ -301,13 +310,12 @@ class Polinominal():
 
         if (len(degrees) == 0 or self.coefficients == {0: 0}) and not self.fraction:
             return "0"
-
         for i in range(len(degrees)):
             term_degree = degrees[i]
             term_coefficient = self.coefficients[term_degree]
             if term_coefficient == 0:
                 continue
-
+            
             sign, degree = "", ""
             
             if i == 0:
@@ -319,8 +327,12 @@ class Polinominal():
 
             if term_degree == 0:
                 if type(term_coefficient) == Fraction:
-                    frac = True
-                    numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
+                    if term_coefficient.denominator == 1:
+                        mid = str(term_coefficient.numerator)
+                        numer = denom = " " * len(mid)
+                    else:
+                        frac = True
+                        numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
                 else:                    
                     mid = str(term_coefficient)
                     numer = denom = " " * len(mid)
@@ -330,8 +342,12 @@ class Polinominal():
                     numer, mid, denom = "", "", ""
                 else:
                     if type(term_coefficient) == Fraction:
-                        frac = True
-                        numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
+                        if term_coefficient.denominator == 1:
+                            mid = str(term_coefficient.numerator)
+                            numer = denom = " " * len(mid)
+                        else:
+                            frac = True
+                            numer, mid, denom = makeFrac(str(term_coefficient.numerator), str(term_coefficient.denominator))
                     else:
                         mid = str(term_coefficient)
                         numer = denom = " " * len(mid)
@@ -355,7 +371,7 @@ class Polinominal():
 
         if self.fraction:
             frac = True
-            numer, divider, denom = makeFrac(str(self.fraction.numerator), str(self.fraction.denominator))
+            numer, divider, denom = makeFrac(repr(self.fraction.numerator), repr(self.fraction.denominator))
 
             if terms_mid:
                 terms_numer = terms_numer + " " * 3 + numer
@@ -379,13 +395,14 @@ class Polinominal():
         for i in degrees:
             s = ""
 
-            if self.coefficients[i] < 0:
-                s += "-"
-            elif self.coefficients[i] == 0:
+            if self.coefficients[i] == 0:
                 continue
+
+            if i == degrees[0]:
+                s = "-" if self.coefficients[i] < 0 else ""
             else:
-                if len(string) != 0:
-                    s += "+"
+                s = "- " if self.coefficients[i] < 0 else "+ "
+
 
             if abs(self.coefficients[i]) != 1 or i == 0:
                 s += str(abs(self.coefficients[i]))
@@ -398,11 +415,14 @@ class Polinominal():
                 
         if self.fraction:
             if len(string) != 0:
-                string.append(f"+({self.fraction.numerator.__repr__})/({self.fraction.denominator.__repr__})")
+                string.append(f"+ ({repr(self.fraction.numerator)})/({repr(self.fraction.denominator)})")
             else:                
-                string.append(f"({self.fraction.numerator.__repr__})/({self.fraction.denominator.__repr__})")
+                string.append(f"({repr(self.fraction.numerator)})/({repr(self.fraction.denominator)})")
 
         if len(string) == 0:
             return "0"
         
-        return "".join(string)
+        return " ".join(string)
+    
+
+    #def evaluate_polynomial(self, variable: Union[int, float]):

@@ -1,9 +1,7 @@
 # PyCalc
-Mathematical module for python
+Mathematical module for python.
 
 This module adds the ability to work with polynomials through the `Polynomial` class, which contains separate terms of different degrees and the correct fraction.
-
-
 
 ---
 
@@ -12,7 +10,7 @@ To start working with polynomials, you need to create a `Variable` and use it to
 ### Example
 
 ```python
-from polinominal import Variable
+from PyCalc import Variable
 
 x = Variable("x")
 
@@ -22,11 +20,11 @@ b = (4*x**6 - 8*x**5 + 9*x**4 - x**3 + 2*x**2 - 5*x + 1) * (3*x**3 - x**2 + 2*x 
 d = a - c + b
 
 print(a)
-print("=" * 100 + 6)
+print("=" * (100 + 6))
 print(c)
-print("=" * 100 + 6)
+print("=" * (100 + 6))
 print(b)
-print("=" * 100 + 6)
+print("=" * (100 + 6))
 print(d)
 ```
 
@@ -48,14 +46,16 @@ x^2 + 2x + 1
                                                       x^6 - 3x^5 + 2x^4 - 3x^3 + 85x^2 - 252x + 84
 ```
 
-## `Polynomial` & `Numpy`
+---
+
+## `PyCalc` & `Numpy`
 
 The `Polynomial` class can be used together with `Numpy`.
 
 ### Example
 
-```python
-from polinominal import Variable
+```Python
+from PyCalc import Variable
 from numpy import array
 
 x = Variable("x")
@@ -72,9 +72,11 @@ b = array([
 print(a @ b)
 ```
 
-```C
-[[x^2+1 3/2x x^2]
- [8x 9 2x^3-21]]
+#### Output
+
+```Java
+[[x^2 + 1 3/2x x^2 - 7/2x]
+ [8x 9 2x^3 - 21]]
 ```
 
 ---

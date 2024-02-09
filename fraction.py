@@ -1,4 +1,4 @@
-from operations import gcd, scm
+from .operations import gcd, scm
 
 
 class Fraction():
@@ -10,7 +10,6 @@ class Fraction():
 
     def __new__(cls, numerator, denominator):
         if type(numerator).__name__ not in cls.__available_types and type(denominator) == cls.__available_types:
-            print(type(numerator), type(denominator))
             raise TypeError
         
         if numerator == 0:
@@ -166,7 +165,6 @@ class Fraction():
         elif type(other) == Fraction:
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
-                print((self.denominator * other.numerator) / (self.numerator * other.numerator))
                 return (self.denominator * other.numerator) / (self.numerator * other.numerator)
         
         return Fraction(other.numerator * self.denominator, other.denominator * self.numerator)
@@ -186,7 +184,7 @@ class Fraction():
     
 
     def __eq__(self, other) -> bool: # self == other        
-        return (float(self) - float(other)) < 10**(-20)
+        return abs(float(self) - float(other)) < 10**(-20)
     
 
     def __lt__(self, other) -> bool: # self < other
@@ -212,4 +210,6 @@ class Fraction():
     def __repr__(self) -> str:
         if self.numerator == 0 or self.denominator == 1:
             return str(self.numerator)
+        elif type(self.numerator).__name__ == "Polinominal" or type(self.denominator).__name__ == "Polinominal":
+            return f"({self.numerator})/({self.denominator})"
         return f"{self.numerator}/{self.denominator}"
