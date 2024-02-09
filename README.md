@@ -3,6 +3,8 @@ Mathematical module for python
 
 This module adds the ability to work with polynomials through the `Polynomial` class, which contains separate terms of different degrees and the correct fraction.
 
+
+
 ---
 
 To start working with polynomials, you need to create a `Variable` and use it to set a polynomial.
@@ -46,7 +48,7 @@ x^2 + 2x + 1
                                                       x^6 - 3x^5 + 2x^4 - 3x^3 + 85x^2 - 252x + 84
 ```
 
----
+## `Polynomial` & `Numpy`
 
 The `Polynomial` class can be used together with `Numpy`.
 
