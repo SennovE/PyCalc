@@ -88,7 +88,7 @@ print(a @ b)
 
 1. This module makes it possible to work with fractions.
 
-    You can use 'float' type in your expression and `Fraction` will automatically convert it to fraction if the numerator and denominator do not exceed <b>10^3</b> (if you don't need polinominal, you can use `Fraction.toFration('float')`).
+    You can use 'float' type in your expression and `Fraction` will automatically convert it to fraction if the numerator and denominator do not exceed <b>10^3</b> (if you don't need polynominal, you can use `Fraction.toFration('float')`).
 
      <details>
      <summary><h3><i>Example</i></h3></summary>
@@ -143,5 +143,5 @@ print(a @ b)
      ```
      </details>
 
-1. Also in the submodule `operations` there is an implementation of the `fft algorithm`, which also allows for fast multiplication, which can be used when calculating the multiplication of polynomials that do not have huge powers or coefficients.
+1. Also, in the submodule `operations` there is an implementation of the `fft algorithm`, which also allows for fast multiplication, which can be used when calculating the multiplication of polynomials that do not have huge powers or coefficients.
 
