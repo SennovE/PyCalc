@@ -222,11 +222,11 @@ class Fraction():
         return Fraction(self.numerator**other, self.denominator**other)
     
 
-    def __float__(self):
+    def __float__(self) -> float:
         return self.numerator / self.denominator
     
 
-    def __int__(self):
+    def __int__(self) -> int:
         return self.numerator // self.denominator
     
 
