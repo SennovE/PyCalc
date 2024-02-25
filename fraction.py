@@ -208,6 +208,11 @@ class Fraction():
         return Fraction(other.numerator * self.denominator, other.denominator * self.numerator)
     
 
+    def __neg__(self) -> "Fraction":
+        """-'Fraction'"""
+        return Fraction(-self.numerator, self.denominator)
+
+
     def __pow__(self, other) -> "Fraction":
         """'Fraction' ** other"""
 
