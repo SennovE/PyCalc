@@ -8,7 +8,7 @@ class Fraction():
     __slots__ = ["numerator", "denominator"]
     __available_types = ["int", "float", "Polinominal", "Fraction"]
 
-    def __new__(cls, numerator, denominator):
+    def __new__(cls, numerator, denominator=1):
         if type(numerator).__name__ not in cls.__available_types and type(denominator) == cls.__available_types:
             raise TypeError
         
@@ -55,6 +55,10 @@ class Fraction():
             
         elif type(numerator) == Fraction or type(denominator) == Fraction:
             return numerator / denominator
+        else:
+            instance.numerator = Fraction.toFration(numerator).numerator
+            instance.denominator = Fraction.toFration(numerator).denominator
+            return instance
         
 
     @staticmethod
@@ -70,6 +74,8 @@ class Fraction():
             return number
 
         numerator, denominator = 1, 1
+        sign = -1 if (number < 0) else 1
+        number = abs(number)
 
         while abs(number - numerator / denominator) > 10e-20:
             if numerator > 10**3 or denominator > 10**3:
@@ -79,7 +85,7 @@ class Fraction():
             else:
                 denominator += 1
 
-        return Fraction(numerator, denominator)
+        return Fraction(sign * numerator, denominator)
     
 
     def __add__(self, other) -> "Fraction":
@@ -162,6 +168,8 @@ class Fraction():
             if "Polinominal" in [type(self.numerator).__name__, type(self.denominator).__name__,
                                  type(other.numerator).__name__, type(other.denominator).__name__]:
                 return (self.numerator * other.numerator) / (self.denominator * other.denominator)
+        elif type(other).__name__ == "Polinominal":
+            return other * self
 
         return Fraction(self.numerator * other.numerator, self.denominator * other.denominator)
 
